@@ -42,7 +42,7 @@ def newifname(container):
     return('eth{}'.format(i))
 
 
-def addlink(c1, c2):
+def addlink(c1, c2, mtu):
     create_netns(c1)
     ifname1 = newifname(c1)
     create_netns(c2)
@@ -53,14 +53,18 @@ def addlink(c1, c2):
     idx1 = ipr.link_lookup(ifname='veth1')[0]
     idx2 = ipr.link_lookup(ifname='veth2')[0]
     ipr.link('set', index=idx1, ifname=ifname1,
-             net_ns_fd=c1, state='up', mtu=MTU)
+             net_ns_fd=c1, state='up', mtu=mtu)
     ipr.link('set', index=idx2, ifname=ifname2,
-             net_ns_fd=c2, state='up', mtu=MTU)
+             net_ns_fd=c2, state='up', mtu=mtu)
     print("link {}:{} <---> {}:{} created".format(c1, ifname1, c2, ifname2))
 
 
 if __name__ == '__main__':
-    if (len(sys.argv) != 3):
-        print("usage: {} container1 container2".format(sys.argv[0]))
+    if (len(sys.argv) < 3):
+        print("usage: {} container1 container2 [mtu]".format(sys.argv[0]))
         exit(1)
-    addlink(sys.argv[1], sys.argv[2])
+    if (len(sys.argv) == 4):
+        MTU = sys.argv[3]
+    else:
+        MTU = 1500
+    addlink(sys.argv[1], sys.argv[2], MTU)
