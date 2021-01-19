@@ -5,8 +5,6 @@ import time
 import os
 import docker
 from pyroute2 import NetNS, IPRoute
-from pprint import pprint
-from threading import Event
 
 
 def create_netns(container):
