@@ -15,8 +15,8 @@ docker run -ti -d --rm --name c1 --cap-add NET_ADMIN alpine
 docker run -ti -d --rm --name c2 --cap-add NET_ADMIN alpine
 
 echo "connect $1 with $2 with 2 links ..."
-docker run -ti --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock --pid host marcelwiget/link-containers c1 c2
-docker run -ti --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock --pid host marcelwiget/link-containers c1 c2
+docker run -ti --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock --pid host marcelwiget/link-containers c1/c2
+docker run -ti --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock --pid host marcelwiget/link-containers c1/c2
 
 docker ps
 
@@ -52,3 +52,18 @@ show interfaces in container c1:
 135: eth0@if136: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
     link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff
 ```
+
+Using docker-compose, creating multiple links, optionally with large MTU:
+
+```
+  links:
+    image: marcelwiget/link-containers
+    privileged: true
+    network_mode: none
+    restart: "no"
+    pid: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: r1/host1 r1/host2/3000
+```
+

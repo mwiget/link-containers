@@ -54,15 +54,22 @@ def addlink(c1, c2, mtu):
              net_ns_fd=c1, state='up', mtu=mtu)
     ipr.link('set', index=idx2, ifname=ifname2,
              net_ns_fd=c2, state='up', mtu=mtu)
-    print("link {}:{} <---> {}:{} created".format(c1, ifname1, c2, ifname2))
+    print("link {}:{} <---> {}:{} with mut={} created".format(c1,
+                                                              ifname1, c2, ifname2, mtu))
 
 
 if __name__ == '__main__':
-    if (len(sys.argv) < 3):
-        print("usage: {} container1 container2 [mtu]".format(sys.argv[0]))
+    if (len(sys.argv) < 2):
+        print(
+            "usage: {} container1/container2/[mtu] [...]".format(sys.argv[0]))
         exit(1)
-    if (len(sys.argv) == 4):
-        MTU = sys.argv[3]
-    else:
-        MTU = 1500
-    addlink(sys.argv[1], sys.argv[2], MTU)
+    for arg in sys.argv:
+        if arg == sys.argv[0]:
+            continue
+        mtu = 1500
+        try:
+            (c1, c2, mtu) = arg.split('/')
+            mtu = int(mtu)
+        except:
+            (c1, c2) = arg.split('/')
+        addlink(c1, c2, mtu)
