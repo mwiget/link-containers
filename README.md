@@ -67,3 +67,39 @@ Using docker-compose, creating multiple links, optionally with large MTU:
     command: r1/host1 r1/host2/3000
 ```
 
+# build multi-arch container
+
+Follow the instructions on https://www.docker.com/blog/multi-arch-images/ to create mybuilder, then use
+buildx:
+
+```
+docker buildx create --name mybuilder
+docker buildx use mybuilder
+```
+
+Now build and push the container (change first tag to match your image repository service):
+
+```
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t marcelwiget/link-containers --push .
+```
+Verify with imagetools to inspect the container image:
+
+```
+$ docker buildx imagetools inspect marcelwiget/link-containers
+Name:      docker.io/marcelwiget/link-containers:latest
+MediaType: application/vnd.docker.distribution.manifest.list.v2+json
+Digest:    sha256:310ec786767c9423264a912e3f5b863deeb6ba5cc33d05e08d996d483863e328
+
+Manifests:
+  Name:      docker.io/marcelwiget/link-containers:latest@sha256:67264eace498b7527a91e5741dd111799aab9a0f69b751f97f4a6c7634baa17d
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/amd64
+
+  Name:      docker.io/marcelwiget/link-containers:latest@sha256:aed73ba9f7ff8068dc9d3fce3cd0a5115f36a4d182dd059279ab5e6c80bfe82f
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/arm64
+
+  Name:      docker.io/marcelwiget/link-containers:latest@sha256:6564e0b37412dc872e8512f94da3bda884dbb9e6fea15d48d295738b500f3725
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/arm/v7
+```
