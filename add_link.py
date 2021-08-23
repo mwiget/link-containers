@@ -54,7 +54,7 @@ def addlink(c1, c2, mtu):
              net_ns_fd=c1, state='up', mtu=mtu)
     ipr.link('set', index=idx2, ifname=ifname2,
              net_ns_fd=c2, state='up', mtu=mtu)
-    print("link {}:{} <---> {}:{} with mut={} created".format(c1,
+    print("link {}:{} <---> {}:{} with mtu={} created".format(c1,
                                                               ifname1, c2, ifname2, mtu))
 
 
